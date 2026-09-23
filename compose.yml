@@ -1,0 +1,114 @@
+name: bangladesh-map-platform
+
+services:
+  nominatim:
+    image: mediagis/nominatim:5.3
+    environment:
+      PBF_PATH: /nominatim/data/bangladesh.osm.pbf
+      NOMINATIM_PASSWORD: ${NOMINATIM_PASSWORD:-nominatim_dev_password}
+      IMPORT_STYLE: full
+      IMPORT_WIKIPEDIA: "false"
+      IMPORT_US_POSTCODES: "false"
+      IMPORT_GB_POSTCODES: "false"
+      IMPORT_TIGER_ADDRESSES: "false"
+      UPDATE_MODE: none
+      FREEZE: "false"
+      THREADS: ${NOMINATIM_THREADS:-4}
+    ports:
+      - "${NOMINATIM_PORT:-8080}:8080"
+    volumes:
+      - nominatim-data:/var/lib/postgresql/16/main
+      - ./map-data/raw/${NOMINATIM_PBF_FILE:-bangladesh-260911.osm.pbf}:/nominatim/data/bangladesh.osm.pbf
+    shm_size: ${NOMINATIM_SHM_SIZE:-1gb}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/status?format=json || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 20
+      start_period: 2h
+    restart: unless-stopped
+
+  app-db:
+    image: postgis/postgis:17-3.5
+    environment:
+      POSTGRES_DB: ${APP_DB_NAME:-bangladesh_map}
+      POSTGRES_USER: ${APP_DB_USER:-map_app}
+      POSTGRES_PASSWORD: ${APP_DB_PASSWORD:-map_app_dev_password}
+    ports:
+      - "${APP_DB_PORT:-5433}:5432"
+    volumes:
+      - app-db-data:/var/lib/postgresql/data
+      - ./database:/database:ro
+      - ./database/init/001_initialize.sql:/docker-entrypoint-initdb.d/001_initialize.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost:5173}
+      GEOCODER_PROVIDER: ${GEOCODER_PROVIDER:-nominatim}
+      NOMINATIM_URL: http://nominatim:8080
+      NOMINATIM_USER_AGENT: ${NOMINATIM_USER_AGENT:-BangladeshMapPlatform/0.1 (local-development)}
+      PHOTON_URL: ${PHOTON_URL:-https://photon.komoot.io}
+      MAP_STYLE_URL: ${MAP_STYLE_URL:-/map/style}
+      MAP_DEFAULT_LONGITUDE: ${MAP_DEFAULT_LONGITUDE:-90.3563}
+      MAP_DEFAULT_LATITUDE: ${MAP_DEFAULT_LATITUDE:-23.685}
+      MAP_DEFAULT_ZOOM: ${MAP_DEFAULT_ZOOM:-6.4}
+      GEOCODER_TIMEOUT_SECONDS: ${GEOCODER_TIMEOUT_SECONDS:-8}
+      GEOCODER_CACHE_TTL_SECONDS: ${GEOCODER_CACHE_TTL_SECONDS:-3600}
+      DATABASE_URL: postgresql://${APP_DB_USER:-map_app}:${APP_DB_PASSWORD:-map_app_dev_password}@app-db:5432/${APP_DB_NAME:-bangladesh_map}
+      DATABASE_CONNECT_TIMEOUT_SECONDS: ${DATABASE_CONNECT_TIMEOUT_SECONDS:-5}
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    depends_on:
+      app-db:
+        condition: service_healthy
+      nominatim:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=5)",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:5173/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+volumes:
+  app-db-data:
+    name: bangladesh-map-platform_app-db-data
+  nominatim-data:
+    name: bangladesh-map-platform_nominatim-data
+
+networks:
+  default:
+    name: bangladesh-map-platform_default

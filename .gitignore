@@ -1,0 +1,12 @@
+.env
+*.md
+!README.md
+__pycache__/
+.pytest_cache/
+*.py[cod]
+backend/.venv/
+frontend/node_modules/
+frontend/dist/
+map-data/raw/*
+!map-data/raw/.gitkeep
+map-data/tiles/

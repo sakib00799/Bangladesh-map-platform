@@ -1,0 +1,393 @@
+:root {
+  color: #17231c;
+  background: #eef5f0;
+  font-family: Inter, system-ui, sans-serif;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+.page-shell {
+  min-height: 100vh;
+  padding: 32px clamp(16px, 4vw, 56px) 48px;
+}
+
+.page-header {
+  display: flex;
+  width: min(100%, 1280px);
+  align-items: end;
+  justify-content: space-between;
+  gap: 32px;
+  margin: 0 auto 28px;
+}
+
+.page-header h1 {
+  margin: 10px 0 8px;
+  font-size: clamp(2rem, 5vw, 3.8rem);
+  line-height: 1;
+}
+
+.intro {
+  margin: 0;
+  color: #526158;
+}
+
+.map-card {
+  width: min(100%, 1280px);
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid #d7e4da;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 18px 50px rgb(23 35 28 / 8%);
+}
+
+.location-search {
+  padding: 22px 24px;
+  border-bottom: 1px solid #e3ebe5;
+  background: #f7faf8;
+}
+
+.search-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.search-fields {
+  display: flex;
+  gap: 10px;
+}
+
+.search-fields input {
+  width: 100%;
+  min-width: 0;
+  padding: 11px 13px;
+  border: 1px solid #b9cbbf;
+  border-radius: 10px;
+  color: #17231c;
+  background: #ffffff;
+  font: inherit;
+}
+
+.search-fields input:focus {
+  border-color: #287648;
+  outline: 3px solid rgb(40 118 72 / 16%);
+}
+
+.search-fields button {
+  min-width: 108px;
+  padding: 11px 18px;
+  border: 0;
+  border-radius: 10px;
+  color: #ffffff;
+  background: #17231c;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.search-fields button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.search-message {
+  margin: 12px 0 0;
+  color: #526158;
+  font-size: 0.9rem;
+}
+
+.search-results {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.search-results button {
+  display: grid;
+  width: 100%;
+  gap: 3px;
+  padding: 12px 14px;
+  border: 1px solid #d7e4da;
+  border-radius: 10px;
+  color: #17231c;
+  background: #ffffff;
+  text-align: left;
+  cursor: pointer;
+}
+
+.search-results button:hover,
+.search-results button:focus-visible {
+  border-color: #287648;
+  background: #eef7f1;
+}
+
+.search-results span {
+  color: #647168;
+  font-size: 0.86rem;
+}
+
+.map-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px 24px;
+}
+
+.map-card-header h2 {
+  margin: 0 0 5px;
+  font-size: 1.5rem;
+}
+
+.map-card-header p {
+  margin: 0;
+  color: #647168;
+  font-size: 0.9rem;
+}
+
+.location-button {
+  flex: 0 0 auto;
+  min-width: 158px;
+  padding: 11px 18px;
+  border: 0;
+  border-radius: 10px;
+  color: #ffffff;
+  background: #287648;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.location-button:hover:not(:disabled) {
+  background: #1f603a;
+}
+
+.location-button:focus-visible {
+  outline: 3px solid rgb(40 118 72 / 30%);
+  outline-offset: 3px;
+}
+
+.location-button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.location-feedback {
+  padding: 12px 24px;
+  border-top: 1px solid #e3ebe5;
+  background: #f7faf8;
+}
+
+.location-feedback p {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+
+.location-feedback .selected-address,
+.location-feedback .address-status {
+  margin-top: 5px;
+  color: #526158;
+  font-weight: 500;
+}
+
+.location-feedback .location-error {
+  color: #a22c36;
+}
+
+.nearby-panel {
+  padding: 22px 24px;
+  border-top: 1px solid #e3ebe5;
+  background: #ffffff;
+}
+
+.nearby-heading-row {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.nearby-heading-row h2 {
+  margin: 0 0 5px;
+  font-size: 1.2rem;
+}
+
+.nearby-heading-row p,
+.origin-coordinates,
+.nearby-message {
+  margin: 0;
+  color: #647168;
+  font-size: 0.9rem;
+}
+
+.nearby-controls {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.nearby-controls label {
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.nearby-controls select,
+.nearby-controls button {
+  padding: 10px 12px;
+  border-radius: 9px;
+  font: inherit;
+}
+
+.nearby-controls select {
+  border: 1px solid #b9cbbf;
+  background: #ffffff;
+}
+
+.nearby-controls button {
+  border: 0;
+  color: #ffffff;
+  background: #287648;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.nearby-controls button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.origin-coordinates,
+.nearby-message {
+  margin-top: 12px;
+}
+
+.nearby-results {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nearby-results li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 14px;
+  border: 1px solid #d7e4da;
+  border-radius: 10px;
+  background: #f7faf8;
+}
+
+.nearby-results li div {
+  display: grid;
+  gap: 3px;
+}
+
+.nearby-results li span {
+  color: #647168;
+  font-size: 0.85rem;
+}
+
+.nearby-results .distance {
+  flex: 0 0 auto;
+  color: #287648;
+  font-weight: 750;
+}
+
+.eyebrow {
+  margin: 0;
+  color: #287648;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.health-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+  font-weight: 700;
+}
+
+.health-status span {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #b33a3a;
+}
+
+.health-status.healthy span {
+  background: #2c8a54;
+}
+
+.bangladesh-map {
+  width: 100%;
+  height: clamp(480px, 68vh, 760px);
+  border-top: 1px solid #e3ebe5;
+}
+
+.bangladesh-map .maplibregl-canvas {
+  cursor: crosshair;
+}
+
+.bangladesh-map .maplibregl-marker {
+  cursor: grab;
+}
+
+.bangladesh-map .maplibregl-marker:active {
+  cursor: grabbing;
+}
+
+.maplibregl-ctrl-attrib {
+  font-family: Inter, system-ui, sans-serif;
+}
+
+@media (max-width: 700px) {
+  .page-header,
+  .map-card-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .location-button {
+    width: 100%;
+  }
+
+  .search-fields {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .nearby-heading-row,
+  .nearby-controls {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .nearby-controls label {
+    margin-bottom: -4px;
+  }
+
+  .bangladesh-map {
+    height: 62vh;
+    min-height: 420px;
+  }
+}
